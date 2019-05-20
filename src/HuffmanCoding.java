@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class HuffmanCoding {
-	public Node root;
 
     HuffmanCoding() {
     	
@@ -11,10 +10,10 @@ public class HuffmanCoding {
     
     class Node {
 		int value;
-		char name;
+		String name;
         Node left, right, parent;
         
-        public Node(int i, char s) {
+        public Node(int i, String s) {
             value = i;
             name = s;
             left = right = parent = null;
@@ -49,6 +48,21 @@ public class HuffmanCoding {
 			finalVal++;
 		}
 		return finalVal;
+	}
+	
+	public static String findMap(String name, Node node, String bits) {
+		if(node.left != null || node.right != null) {
+			if(node.left.name.contains(name)) {
+				bits = String.valueOf(bits) + String.valueOf(0);
+				return findMap(name, node.left, bits);
+			}else {
+				bits = String.valueOf(bits) + String.valueOf(1);
+				return findMap(name, node.right, bits);
+			}
+		}else {
+			
+		}
+		return bits;
 	}
 	
 	class NodeComparator implements Comparator<Node>{
@@ -92,33 +106,28 @@ public class HuffmanCoding {
 			finalChar[i] = cArray[i];
 			finalFreq[i] = fArray[i];
 		}
-
+		Queue<Node> q = new LinkedList<Node>();
 		PriorityQueue<Node> pQueue = new PriorityQueue<Node>(finalFreq.length, hTree.new NodeComparator());
 		PriorityQueue<Node> pQueue2 = new PriorityQueue<Node>(finalFreq.length, hTree.new NodeComparator());
 		for(int i = 0; i< finalFreq.length; i++) {
-			Node node = hTree.new Node(finalFreq[i], finalChar[i]);
+			Node node = hTree.new Node(finalFreq[i], String.valueOf(finalChar[i]));
 			pQueue.add(node);
+			q.add(node);
 	    }
 		for(int i = 0; i<allCArray.length; i++) {
 			System.out.print(allCArray[i]);
 		}
 		System.out.println();
 		for(int i = 0; i<finalFreq.length; i++) {
-			System.out.print(finalChar[i] + " | ");
-			System.out.print(finalFreq[i] + " | ");
 			Node s = pQueue.poll();
 			pQueue2.add(s);
-			System.out.print(s.name + " | ");
-			System.out.print(s.value + " | ");
-			System.out.println();
 		}
 		Node root,node3,node2,node1;
 		node1 = node2 = node3 = root = null;
-		String g = "^";
 		while(!pQueue2.isEmpty()) {
 			node1 = (Node) pQueue2.poll();
 			node2 = (Node) pQueue2.poll();
-			node3 = hTree.new Node((node1.value+node2.value), (g.charAt(0)));
+			node3 = hTree.new Node((node1.value+node2.value), node1.name + node2.name);
 			node3.left = node1;
 			node3.right = node2;
 			node1.parent = node2.parent = node3;
@@ -127,7 +136,19 @@ public class HuffmanCoding {
 			} else {
 				root = node3;
 			}
-			
+		}
+		String arr[] = new String[finalFreq.length]; 
+		int k = 0;
+		while(!q.isEmpty()) {
+			Node look = q.poll();
+			arr[k] = findMap(look.name, root, "");
+			k++;
+		}
+		for(int i = 0; i<finalFreq.length; i++) {
+			System.out.print(finalChar[i] + " | ");
+			System.out.print(finalFreq[i] + " | ");
+			System.out.print(arr[i]);
+			System.out.println();
 		}
 		System.out.println();
 	}
