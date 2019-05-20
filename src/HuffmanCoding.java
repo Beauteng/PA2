@@ -84,6 +84,7 @@ public class HuffmanCoding {
 		char[] allCArray = new char[(int) f.length()];
 		char[] cArray = new char[((int) f.length())+1];
 		int[] fArray = new int[((int) f.length())+1];
+		
 		while(scan.hasNext()) {
 			String s = scan.next();
 			allCArray = s.toCharArray();
@@ -99,31 +100,40 @@ public class HuffmanCoding {
 				fArray[findSpot(cArray, allCArray[i])]++;
 			}
 		}
+		
 		int finalLength = findLengthNeeded(fArray);
 		char[] finalChar = new char[finalLength];
 		int[] finalFreq = new int[finalLength];
+		
 		for(int i = 0; i<finalLength; i++) {
 			finalChar[i] = cArray[i];
 			finalFreq[i] = fArray[i];
 		}
+		
 		Queue<Node> q = new LinkedList<Node>();
 		PriorityQueue<Node> pQueue = new PriorityQueue<Node>(finalFreq.length, hTree.new NodeComparator());
 		PriorityQueue<Node> pQueue2 = new PriorityQueue<Node>(finalFreq.length, hTree.new NodeComparator());
+		
 		for(int i = 0; i< finalFreq.length; i++) {
 			Node node = hTree.new Node(finalFreq[i], String.valueOf(finalChar[i]));
 			pQueue.add(node);
 			q.add(node);
 	    }
+		
 		for(int i = 0; i<allCArray.length; i++) {
 			System.out.print(allCArray[i]);
 		}
+		
 		System.out.println();
+		
 		for(int i = 0; i<finalFreq.length; i++) {
 			Node s = pQueue.poll();
 			pQueue2.add(s);
 		}
+		
 		Node root,node3,node2,node1;
 		node1 = node2 = node3 = root = null;
+		
 		while(!pQueue2.isEmpty()) {
 			node1 = (Node) pQueue2.poll();
 			node2 = (Node) pQueue2.poll();
@@ -137,19 +147,52 @@ public class HuffmanCoding {
 				root = node3;
 			}
 		}
+		
 		String arr[] = new String[finalFreq.length]; 
 		int k = 0;
+		
 		while(!q.isEmpty()) {
 			Node look = q.poll();
 			arr[k] = findMap(look.name, root, "");
 			k++;
 		}
+		
 		for(int i = 0; i<finalFreq.length; i++) {
 			System.out.print(finalChar[i] + " | ");
 			System.out.print(finalFreq[i] + " | ");
 			System.out.print(arr[i]);
 			System.out.println();
 		}
+		
+		// Compress
+		String compressed = "";
+		for(int i = 0 ; i<allCArray.length ; i++) {
+			char j = allCArray[i];
+			for(int l = 0 ; l<finalChar.length ; l++) {
+				if(j == finalChar[l]) {
+					compressed += arr[l];
+				}
+			}
+		}
+		
+		// Decompress
+		String decompressed = "";
+		for(int m = 0 ; m < compressed.length();) {
+			Node temp = root;
+			while(temp.left != null || temp.right != null) {
+				if(compressed.charAt(m) == '1') {
+					temp = temp.right;
+					m++;
+				}else {
+					temp = temp.left;
+					m++;
+				}
+			}
+			decompressed += temp.name;
+		}
+		
+		System.out.println("Compressed input: " + compressed);
+		System.out.println("Decompressed input: " + decompressed);
 		System.out.println();
 	}
 }
