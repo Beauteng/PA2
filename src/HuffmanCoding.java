@@ -1,12 +1,34 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
-public class HuffmanCoding {
+//*********************************************************
+//Code created on: 5/18/2019
+//Code last edited on: 5/24/2019
+//Code created by: Spencer Raymond
+//Associated with: MSU CSCI-232
+//Description: Huffman Coding Algorithm. This algorithm
+//takes in an input file and reads it char by char and
+//inserts those character into an array. The next step is
+//to create an array that measures character frequency. The
+//final step before compressing and decompressing the file
+//is to find the bitmap for each character. To do this we
+//create a tree through a priority queue and map each char
+//to a specific traversal of the Huffman Tree. Then we
+//compress the input file by taking that original char
+//array and replacing each char with the bitmap value. This
+//stores the char data as bits instead of 8 bit char values.
+//Finally, we take that compressed value and traverse the
+//tree to write to an output file the original input file.
+//The code works for all tested inputs but on line separate
+//(\n) the bitmap produces and unwanted effect. However,
+//the compression and decompression still works.
+//*********************************************************
 
-    HuffmanCoding() {
-    	
-    }
+public class HuffmanCoding {
     
     class Node {
 		int value;
@@ -77,7 +99,7 @@ public class HuffmanCoding {
 		}
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws IOException {
 		HuffmanCoding hTree = new HuffmanCoding();
 		File f = new File("input.txt");
 		Scanner scan = new Scanner(new File("input.txt")).useDelimiter("'");
@@ -191,6 +213,9 @@ public class HuffmanCoding {
 			decompressed += temp.name;
 		}
 		
+		BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt", true));
+	    writer.append(decompressed + "\n");
+	    writer.close();
 		System.out.println("Compressed input: " + compressed);
 		System.out.println("Decompressed input: " + decompressed);
 		System.out.println();
